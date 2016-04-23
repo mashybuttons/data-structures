@@ -1,10 +1,9 @@
 var BinarySearchTree = function(value) {
-  var newTree = {};
+  newTree = {};
   newTree = _.extend(newTree, newTreeMethods);
   newTree.value = value;
-  newTree.children = [{left: null}, {right: null}];
-  newTree.left = newTree.children[0].left;
-  newTree.right = newTree.children[1].right;
+  newTree.left = null;
+  newTree.right = null;
   return newTree;
 };
 
@@ -14,44 +13,82 @@ newTreeMethods.insert = function (value) {
   var parent = this;
   var child = BinarySearchTree(value);
   
+  var recurs = function(tree) {
 
-  var leftrecurs = function(tree) {
-    var parent = tree;
-    if (parent.children[0].left === null) {
-      if (value < parent.value) {
-        parent.children[0].left = child;
+    if (value < tree.value) {
+      if (tree.left === null) {
+        tree.left = child;
       } else {
-        parent.children[1].right = child;
+        recurs(tree.left);
       }
+
     } else {
-      leftrecurs(parent.children[0].left);
+      if (tree.right === null) {
+        tree.right = child;
+      } else {
+        recurs(tree.right);
+      }
     }
+
   };
 
-  var rightrecurs = function(tree) {
-    var parent = tree;
-    if (parent.children[1].right === null) {
-      if (value > parent.value) {
-        parent.children[1].right = child;
-      } else {
-        parent.children[0].left = child;
-      }
-    } else {
-      rightrecurs(parent.children[1].right);
-    }
-  };
-  leftrecurs(parent);
-  rightrecurs(parent);
-
+  recurs(parent);
 
 
 };
 
-newTreeMethods.contains = function () {
+newTreeMethods.contains = function (value) {
+  var parent = this;
 
+  var result = false;   //using recurs function to augment outer variable
+  var recurs = function(tree) {
+    if (value === tree.value) {
+      result = true;
+    } else if (tree.left === null && tree.right === null) {
+      result = false;
+    } else if (value < tree.value) {
+      recurs(tree.left);
+
+    } else if (value > tree.value) {
+      recurs(tree.right);
+    }
+  };
+
+  recurs(parent);
+  return result;
+
+
+  //compare value === this.value
+    //return true;
+  //compare value < this.value
+    //recurs over this.left
+  //compare value > this. value
+    //recurse voer this.right
+
+
+   
 };
 
-newTreeMethods.depthFirstLog = function () {
+newTreeMethods.depthFirstLog = function (cb) {
+  //apply cv(this.value)
+    //recurs down the left and right 
+      //apply cb(on all left and right tree values)
+  var result = [];
+  var parent = this;
+  var recurs = function(tree) {
+    result = result.concat(cb(tree.value));
+    if (tree.left !== null) {
+      recurs(tree.left);
+    } else if (tree.right !== null) {
+      recurs(tree.right);
+    }
+  };
+
+  recurs(parent);
+
+  return result;
+
+
 
 };
   
